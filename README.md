@@ -20,7 +20,7 @@
 To get started with the `tsr_package`, clone the repository from GitHub:
 
 ```bash
-git clone ""
+git clone https://github.com/KrishnaRauniyar/TSR_NUCLEOTIDE_PACKAGE.git
 cd TSR_Drug_PACKAGE
 ```
 
