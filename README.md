@@ -21,7 +21,7 @@ To get started with the `tsr_package`, clone the repository from GitHub:
 
 ```bash
 git clone https://github.com/KrishnaRauniyar/TSR_NUCLEOTIDE_PACKAGE.git
-cd TSR_Drug_PACKAGE
+cd TSR_NUCLEOTIDE_PACKAGE
 ```
 
 ### Installing the Package
@@ -119,9 +119,6 @@ TSR(data_dir, csv_file, output_option="keys")
 - `input_files`: A list of PDB IDs or the path to a CSV file containing protein IDs and chains.
 - `chain`: A list of chains corresponding to each PDB file (optional if using a CSV file).
 - `output_option`: Either "keys" to generate key files or "triplets" to generate triplet files.
-- `aa_grouping`: Optional argument. Set to True if you want to use amino acid grouping labels instead of individual labels.
-- `mirror_image`: Optional argument. Set to True if you want the TSR to address for the mirror image triangles.
-- `size_filter`: Optional argument. Set to an integer value if you want to keep keys with a mxDist less than that.
 
 ## Examples
 ### Example 1: Retrieving PDB Files and Generating Keys
