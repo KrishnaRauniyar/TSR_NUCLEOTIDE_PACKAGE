@@ -14,7 +14,7 @@ setup(
     description='A package for retrieving PDB files and generating key/triplet files for Nucleotide-Protein analysis.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/pooryakhajouie/TSR-Package',
+    url='https://github.com/KrishnaRauniyar/TSR_NUCLEOTIDE_PACKAGE.git',
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
