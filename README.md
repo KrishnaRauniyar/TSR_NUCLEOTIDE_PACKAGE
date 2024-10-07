@@ -10,8 +10,6 @@
   - [Using with CSV Input](#using-with-csv-input)
 - [Arguments](#arguments)
 - [Examples](#examples)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
 
