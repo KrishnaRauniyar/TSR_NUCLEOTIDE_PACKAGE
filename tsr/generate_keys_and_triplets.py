@@ -82,7 +82,7 @@ class AminoAcidAnalyzer:
                     self.seqchainIdentity[line[22:27].strip()] = line[17:20].strip()
         
     # This function is used to extract alpha carbons and then calculate theta and key
-    def calcuTheteAndKey(self, data_dir, fileName, chain, seq_value, chain_identity, output_subdir, output_option='both'):
+    def calcuTheteAndKey(self, data_dir, fileName, chain, seq_value, chain_identity, output_subdir, output_option='both', mirror_image=False):
         # Resetting lists for each protein calculation
         self.totalKeys = []
         self.maxDistList = []
@@ -235,10 +235,10 @@ class AminoAcidAnalyzer:
 
                         # Calculating the triplets key value
                         tripletKeys = dLen*dtheta*(numOfLabels**2)*(self.aminoAcidCode[l1_index0]-1)+dLen*dtheta*(numOfLabels)*(self.aminoAcidCode[l2_index1]-1)+dLen*dtheta*(self.aminoAcidCode[l3_index2]-1)+dtheta*(binLength-1)+(binTheta-1)
-
-                        # Total number of keys and max distance list
-                        self.totalKeys.append(tripletKeys)
-                        self.maxDistList.append(maxDistance)
+                        
+                        # Its just the negation of the keys
+                        if mirror_image and thetaAngle1 > 90:
+                            tripletKeys = (-1) * tripletKeys
 
                         # Filtering out the distinct keys
                         if tripletKeys in self.keyFreq:
@@ -267,7 +267,7 @@ if __name__ == "__main__":
     dLen = 18
     numOfLabels = 112
     analyzer = AminoAcidAnalyzer(dtheta, dLen, numOfLabels)    
-    def TSR(data_dir, input_files, chain=None, output_option='both', output_subdir='drug'):
+    def NucleotideTSR(data_dir, input_files, chain=None, output_option='both', output_subdir='nucleotide_results', mirror_image=False):
         os.makedirs(os.path.join(data_dir, output_subdir), exist_ok=True)
         analyzer.readDrugLexicalCsv("drug_atom_lexical_txt.csv")
         chain_dict = {}
@@ -287,14 +287,14 @@ if __name__ == "__main__":
                 chain_dict = {f.upper(): chain for f in input_files}
         numOfCores = multiprocessing.cpu_count()
 
-        def generate_keys_and_triplets(data_dir, file_name, chain, output_subdir, output_option):
+        def generate_keys_and_triplets(data_dir, file_name, chain, output_subdir, output_option, mirror_image):
             analyzer.readSeqAndIdentityChain(data_dir, file_name, chain)
             for seq_value, chain_identity in analyzer.seqchainIdentity.items():
-                analyzer.calcuTheteAndKey(data_dir, file_name, chain, seq_value, chain_identity, output_subdir, output_option)
+                analyzer.calcuTheteAndKey(data_dir, file_name, chain, seq_value, chain_identity, output_subdir, output_option, mirror_image)
 
         # Using Parallel to process files concurrently
         Parallel(n_jobs=numOfCores, verbose=50)(
-            delayed(generate_keys_and_triplets)(data_dir, file_name.upper(), chain_dict.get(file_name.upper(), chain), output_subdir, output_option)
+            delayed(generate_keys_and_triplets)(data_dir, file_name.upper(), chain_dict.get(file_name.upper(), chain), output_subdir, output_option, mirror_image)
             for file_name in input_files
         )
        
@@ -303,4 +303,4 @@ if __name__ == "__main__":
     # input_files = ["2R93"]
     # chain = ["R"]
     # output_option = "both"
-    # TSR(data_dir, input_files, chain=chain, output_option=output_option)
+    # NucleotideTSR(data_dir, input_files, chain=chain, output_option=output_option, mirror_image=True)
