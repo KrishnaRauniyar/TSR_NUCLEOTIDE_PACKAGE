@@ -119,6 +119,7 @@ NucleotideTSR(data_dir, csv_file, output_option="keys", mirror_image=mirror_imag
 - `input_files`: A list of PDB IDs or the path to a CSV file containing protein IDs and chains.
 - `chain`: A list of chains corresponding to each PDB file (optional if using a CSV file).
 - `output_option`: Either "keys" to generate key files or "triplets" to generate triplet files.
+- `mirror_image` : Optional argument. Set to True if you want the TSR to address for the mirror image triangles.
 
 ## Examples
 ### Example 1: Retrieving PDB Files and Generating Keys
