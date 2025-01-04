@@ -1,10 +1,7 @@
 import math
 import pandas as pd
-import os
-import multiprocessing
-from joblib import Parallel, delayed
-from utils.theta_utils import thetaClass
-from utils.distance_utils import dist12Class
+from .utils.theta_utils import thetaClass
+from .utils.distance_utils import dist12Class
 
 class AminoAcidAnalyzer:
     def __init__(self, dtheta, dLen, numOfLabels):
@@ -234,7 +231,7 @@ class AminoAcidAnalyzer:
                         aminoAcidC30, aminoAcidC31, aminoAcidC32 = self.xCoordinate[l3_index2], self.yCoordinate[l3_index2], self.zCoordinate[l3_index2]
 
                         # Calculating the triplets key value
-                        tripletKeys = dLen*dtheta*(numOfLabels**2)*(self.aminoAcidCode[l1_index0]-1)+dLen*dtheta*(numOfLabels)*(self.aminoAcidCode[l2_index1]-1)+dLen*dtheta*(self.aminoAcidCode[l3_index2]-1)+dtheta*(binLength-1)+(binTheta-1)
+                        tripletKeys = self.dLen*self.dtheta*(self.numOfLabels**2)*(self.aminoAcidCode[l1_index0]-1)+self.dLen*self.dtheta*(self.numOfLabels)*(self.aminoAcidCode[l2_index1]-1)+self.dLen*self.dtheta*(self.aminoAcidCode[l3_index2]-1)+self.dtheta*(binLength-1)+(binTheta-1)
                         
                         # Its just the negation of the keys
                         if mirror_image and thetaAngle1 > 90:
@@ -260,47 +257,3 @@ class AminoAcidAnalyzer:
                 keyFreqFile.close()
             if tripletsFile:
                 tripletsFile.close()
-
-# Usage
-if __name__ == "__main__":
-    dtheta = 29
-    dLen = 18
-    numOfLabels = 112
-    analyzer = AminoAcidAnalyzer(dtheta, dLen, numOfLabels)    
-    def NucleotideTSR(data_dir, input_files, chain=None, output_option='both', output_subdir='nucleotide_results', mirror_image=False):
-        os.makedirs(os.path.join(data_dir, output_subdir), exist_ok=True)
-        analyzer.readDrugLexicalCsv("drug_atom_lexical_txt.csv")
-        chain_dict = {}
-        # Handle single file input
-        if isinstance(input_files, str):
-            if input_files.endswith('.csv'):
-                # Read CSV
-                df = pd.read_csv(input_files)
-                chain_dict = dict(zip(df['protein'].str.upper(), df['chain']))
-                input_files = df['protein'].str.upper().tolist()
-            else:
-                input_files = [input_files]
-        if chain:
-            if isinstance(chain, list):
-                chain_dict = {f.upper(): c for f, c in zip(input_files, chain)}
-            elif isinstance(chain, str):
-                chain_dict = {f.upper(): chain for f in input_files}
-        numOfCores = multiprocessing.cpu_count()
-
-        def generate_keys_and_triplets(data_dir, file_name, chain, output_subdir, output_option, mirror_image):
-            analyzer.readSeqAndIdentityChain(data_dir, file_name, chain)
-            for seq_value, chain_identity in analyzer.seqchainIdentity.items():
-                analyzer.calcuTheteAndKey(data_dir, file_name, chain, seq_value, chain_identity, output_subdir, output_option, mirror_image)
-
-        # Using Parallel to process files concurrently
-        Parallel(n_jobs=numOfCores, verbose=50)(
-            delayed(generate_keys_and_triplets)(data_dir, file_name.upper(), chain_dict.get(file_name.upper(), chain), output_subdir, output_option, mirror_image)
-            for file_name in input_files
-        )
-       
-
-    # data_dir = 'Dataset/' 
-    # input_files = ["2R93"]
-    # chain = ["R"]
-    # output_option = "both"
-    # NucleotideTSR(data_dir, input_files, chain=chain, output_option=output_option, mirror_image=True)
